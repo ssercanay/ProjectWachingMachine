@@ -1,4 +1,4 @@
-package com.washingMachine;
+package com.washingmachine;
 
 public class Machine {
   private final String name;
@@ -7,7 +7,7 @@ public class Machine {
 
   /**
    * This class is machine class.
-   * It contains fields and funtionality of machine.
+   * It contains fields and functionalities of machine.
    */
 
   public Machine(String name, double time, double currentTime) {
@@ -44,7 +44,7 @@ public class Machine {
   private void calculateRemainedTime() {
     double totalTime = getCurrentTime() + getTime() * 60000;
     double remainedTime = totalTime - System.currentTimeMillis();
-    this.setTime((int)(remainedTime / 60000));
+    this.setTime((int) (remainedTime / 60000));
   }
 
   /**
@@ -58,5 +58,10 @@ public class Machine {
     } else {
       return false;
     }
+  }
+
+  @Override
+  public String toString(){
+    return getName() + " is available\n";
   }
 }
