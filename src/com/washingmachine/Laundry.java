@@ -16,44 +16,23 @@ public class Laundry {
   private void defineMachines() {
     int programTime = 0;
     for (int i = 1; i < 4; i++) {
-      String machineName = "Machine " + i;
       this.currentTime = System.currentTimeMillis();
-      machines.add(new Machine(machineName, programTime, currentTime));
+      machines.add(new Machine(("Machine " + i), programTime, currentTime));
     }
   }
 
-  public void setProgram() {
-    remainedTime();
-    if (isThereAvailableMachine()) {
-      printAvailableMachines();
-    } else {
-      System.out.println("All machines are occupied!");
-    }
+  public void setMachine(int choseMachine, int setTime) {
+    machines.get(choseMachine - 1).setTime(setTime);
   }
 
-  public void setMachine(int choseMachine, int setTime){
-    if (isThereAvailableMachine()) {
-      machines.get(choseMachine - 1).setTime(setTime);
-    }
-
-  }
-
-  private boolean isThereAvailableMachine() {
+  public boolean isThereAvailableMachine() {
     return machines.stream().anyMatch(Machine::isAvailable);
   }
 
-  private void printAvailableMachines() {
-    machines.stream()
-            .filter(Machine::isAvailable)
-            .forEach(System.out::println);
+  public List<Machine> getMachines() {
+    return this.machines;
   }
 
-  private void remainedTime() {
-    machines.stream()
-            .filter(Machine::isStillOccupied)
-            .map(Machine::getTime)
-            .forEach(System.out::println);
 
-  }
 }
 

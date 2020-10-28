@@ -27,7 +27,7 @@ public class UserInterface {
         "[0] - Exit the room\n"
             + "[1] - Check available machines"
             + "\n"
-            + "[2] - Abort machine"
+            + "[2] - Check remaining times for machines"
             + "\n"
             + "[3] - Price list"
             + "\n"
@@ -42,17 +42,51 @@ public class UserInterface {
       if (operation == 0) {
         break;
       } else if (operation == 1) {
-        laundryCenter.setProgram();
-        System.out.println("Choose a machine please");
-        int choseMachine = scanner.nextInt();
-        System.out.println("Set a time please!");
-        int setTime = scanner.nextInt();
-        laundryCenter.setMachine(choseMachine, setTime);
-
+        if (laundryCenter.isThereAvailableMachine()) {
+          checkAvailableMachines();
+        }
+      } else if (operation == 2) {
+        remainedTime();
       } else {
         System.out.println("Please enter a valid operation");
       }
     }
   }
+
+  private void checkAvailableMachines() {
+    if (laundryCenter.isThereAvailableMachine()) {
+      printAvailableMachines();
+      setMachineProgram();
+    } else {
+      System.out.println("All machines are occupied!\n");
+    }
+  }
+
+  private void setMachineProgram() {
+    System.out.println("Choose a machine please");
+    int choseMachine = scanner.nextInt();
+    System.out.println("Set a time please");
+    int setTime = scanner.nextInt();
+    if (choseMachine > 0 && choseMachine < 4 && setTime > 0) {
+      laundryCenter.setMachine(choseMachine, setTime);
+    } else  {
+      System.out.println("Please enter a valid machine and time\n");
+    }
+  }
+
+  private void printAvailableMachines() {
+    laundryCenter.getMachines().stream()
+            .filter(Machine::isAvailable)
+            .forEach(System.out::println);
+  }
+
+  private void remainedTime() {
+    laundryCenter.getMachines().stream()
+        .filter(Machine::isStillOccupied)
+        // .map(Machine::getTime)
+        .forEach(machine -> System.out.println(machine.getName()
+                + " " + machine.getTime() + " minutes left"));
+  }
+
 }
 
