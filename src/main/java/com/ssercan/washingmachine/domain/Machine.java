@@ -1,4 +1,4 @@
-package com.washingmachine;
+package main.java.com.ssercan.washingmachine.domain;
 
 public class Machine {
   private final String name;
@@ -10,14 +10,15 @@ public class Machine {
    * It contains fields and functionalities of machine.
    */
 
-  public Machine(String name, double time, double currentTime) {
+  public Machine(String name, double currentTime) {
     this.name = name;
-    this.time = time;
+
     this.currentTime = currentTime;
   }
 
   public void setTime(double time) {
     this.time = time;
+
 
   }
 
