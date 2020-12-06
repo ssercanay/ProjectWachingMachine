@@ -1,25 +1,19 @@
-package main.java.com.ssercan.washingmachine.domain;
+package com.ssercan.washingmachine.domain;
 
 public class Machine {
   private final String name;
   private double time;
   private final double currentTime;
 
-  /**
-   * This class is machine class.
-   * It contains fields and functionalities of machine.
-   */
 
-  public Machine(String name, double currentTime) {
+  public Machine(String name) {
     this.name = name;
-
-    this.currentTime = currentTime;
+    this.currentTime = System.currentTimeMillis();
   }
+
 
   public void setTime(double time) {
     this.time = time;
-
-
   }
 
   public double getTime() {
@@ -62,7 +56,7 @@ public class Machine {
   }
 
   @Override
-  public String toString(){
-    return getName() + " is available\n";
+  public String toString() {
+    return getName();
   }
 }

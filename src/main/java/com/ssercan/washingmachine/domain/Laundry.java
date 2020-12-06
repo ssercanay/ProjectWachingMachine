@@ -1,4 +1,4 @@
-package main.java.com.ssercan.washingmachine.domain;
+package com.ssercan.washingmachine.domain;
 
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
@@ -15,35 +15,28 @@ public class Laundry {
     readMachines();
   }
 
-  //take from file
+
   private void readMachines() {
-    try(Scanner scanner = new Scanner(Paths.get("laundry.txt"))) {
-      while (scanner.hasNext()){
+    try (Scanner scanner = new Scanner(Paths.get("laundry.txt"))) {
+      while (scanner.hasNext()) {
         String row = scanner.nextLine();
-        double currentTime = System.currentTimeMillis();
-        machines.add(new Machine(row, currentTime));
+        machines.add(new Machine(row));
       }
     } catch (NoSuchFileException e) {
       System.out.println(e.getMessage() + " was not found.");
+      System.exit(1);
 
     } catch (Exception e) {
+      System.exit(1);
       System.out.println("Error: " + e.getMessage());
     }
 
   }
 
-
   public void setMachine(int choseMachine, int setTime) {
     machines.get(choseMachine - 1).setTime(setTime);
   }
 
-  /*public boolean isThereAvailableMachine() {
-    return machines.stream().anyMatch(Machine::isAvailable);
-  }
-
-  public List<Machine> getMachines() {
-    return this.machines;
-  }*/
 
   public List<Machine> getAvailableMachines() {
     List<Machine> availableMachines = new ArrayList<>();

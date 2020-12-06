@@ -1,6 +1,6 @@
-package main.java.com.ssercan.washingmachine;
+package com.ssercan.washingmachine;
 
-import main.java.com.ssercan.washingmachine.ui.cli.UserInterface;
+import com.ssercan.washingmachine.ui.cli.UserInterface;
 
 import java.util.Timer;
 

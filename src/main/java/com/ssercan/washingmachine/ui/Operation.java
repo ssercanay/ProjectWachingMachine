@@ -1,4 +1,4 @@
-package main.java.com.ssercan.washingmachine.ui;
+package com.ssercan.washingmachine.ui;
 
 public enum Operation {
   EXIT(0);
