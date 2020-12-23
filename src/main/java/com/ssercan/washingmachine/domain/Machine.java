@@ -11,17 +11,21 @@ public class Machine {
     this.currentTime = System.currentTimeMillis();
   }
 
-
   public void setTime(double time) {
-    this.time = time;
-  }
 
+    if (isAvailable()) {
+      if (time > 0) {
+      this.time = time;
+      } else {
+        throw new RuntimeException("You can not set time to a negative number");
+      }
+    } else {
+      throw new RuntimeException("You can not set time to occupied machines");
+
+    }
+  }
   public double getTime() {
     return this.time;
-  }
-
-  public double getCurrentTime() {
-    return this.currentTime;
   }
 
   public String getName() {
@@ -32,6 +36,14 @@ public class Machine {
     return getTime() == 0;
   }
 
+  private void remainedTime(double time) {
+      this.time = time;
+  }
+
+  private double getCurrentTime() {
+    return this.currentTime;
+  }
+
   private boolean isOccupied() {
     return !isAvailable();
   }
@@ -39,7 +51,7 @@ public class Machine {
   private void calculateRemainedTime() {
     double totalTime = getCurrentTime() + getTime() * 60000;
     double remainedTime = totalTime - System.currentTimeMillis();
-    this.setTime((int) (remainedTime / 60000));
+    this.remainedTime((int) (remainedTime / 60000));
   }
 
   /**

@@ -1,7 +1,6 @@
 package com.ssercan.washingmachine.ui.cli;
 
-import com.ssercan.washingmachine.domain.Laundry;
-import com.ssercan.washingmachine.domain.Machine;
+import com.ssercan.washingmachine.domain.*;
 import com.ssercan.washingmachine.ui.Operation;
 
 import java.util.List;
@@ -18,7 +17,21 @@ public class UserInterface {
    */
   public UserInterface() {
     this.scanner = new Scanner(System.in);
-    this.laundryCenter = new Laundry();
+
+    LaundryProvider laundryProvider = new FromDatabaseLaundryProvider();
+    this.laundryCenter = laundryProvider.provide();
+  }
+
+  public void start(String provider) {
+    LaundryProvider laundryProvider;
+
+    if (FromTextFileLaundryProvider.class.getSimpleName().contains(provider)) {
+       laundryProvider = new FromTextFileLaundryProvider("emptyFIle.txt");
+    } else if (RandomLaundryProvider.class.getSimpleName().contains(provider)) {
+       laundryProvider = new RandomLaundryProvider();
+    }
+    System.out.println("\nWelcome to laundry room\n");
+    setOperation();
   }
 
   public void start() {

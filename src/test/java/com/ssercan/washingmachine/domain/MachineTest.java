@@ -20,7 +20,6 @@ public class MachineTest {
     Machine testMachine = new Machine("testMachine");
     boolean isAvailable = testMachine.isAvailable();
     Assertions.assertThat(isAvailable).isTrue();
-
   }
 
   @Test
@@ -31,9 +30,28 @@ public class MachineTest {
       testMachine.setTime(23);
       Assertions.fail("machine can not be set two times");
     } catch (Exception e) {
-      System.out.println("error");
+      Assertions.assertThat(e).hasMessageContaining("You can not set");
     }
 
+  }
+
+  @Test
+  public void machineNameMustHaveName() {
+    Machine testMachine = new Machine("testMachine");
+    testMachine.setTime(30);
+    Assertions.assertThat(testMachine.getName()).isEqualTo("testMachine");
+  }
+
+  @Test
+  public void timeCanNotBeSetToMinus() {
+    Machine testMachine = new Machine("testMachine");
+
+    try{
+      testMachine.setTime(-30);
+      Assertions.fail("Time can not be negative");
+    } catch (Exception e) {
+      Assertions.assertThat(e).hasMessageContaining("negative");
+    }
   }
 
 }
