@@ -1,9 +1,8 @@
 package com.ssercan.washingmachine.domain;
 
+import com.ssercan.washingmachine.domain.machine.Machine;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public class MachineTest {
   @Test
@@ -36,7 +35,7 @@ public class MachineTest {
   }
 
   @Test
-  public void machineNameMustHaveName() {
+  public void machineMustHaveName() {
     Machine testMachine = new Machine("testMachine");
     testMachine.setTime(30);
     Assertions.assertThat(testMachine.getName()).isEqualTo("testMachine");

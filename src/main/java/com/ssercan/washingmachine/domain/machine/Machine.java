@@ -1,14 +1,25 @@
-package com.ssercan.washingmachine.domain;
+package com.ssercan.washingmachine.domain.machine;
 
+import com.ssercan.washingmachine.domain.Table;
+
+@Table(name = "Machines")
 public class Machine {
   private final String name;
   private double time;
   private final double currentTime;
-
+  private int id;
 
   public Machine(String name) {
     this.name = name;
     this.currentTime = System.currentTimeMillis();
+  }
+
+  public void setId(int id) {
+    this.id = id;
+  }
+
+  public int getId() {
+    return this.id;
   }
 
   public void setTime(double time) {

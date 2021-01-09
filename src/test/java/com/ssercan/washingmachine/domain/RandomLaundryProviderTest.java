@@ -1,5 +1,6 @@
 package com.ssercan.washingmachine.domain;
 
+import com.ssercan.washingmachine.domain.laundry.RandomLaundryProvider;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 

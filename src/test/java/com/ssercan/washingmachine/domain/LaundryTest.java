@@ -1,5 +1,7 @@
 package com.ssercan.washingmachine.domain;
 
+import com.ssercan.washingmachine.domain.laundry.Laundry;
+import com.ssercan.washingmachine.domain.machine.Machine;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 

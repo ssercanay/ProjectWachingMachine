@@ -1,4 +1,6 @@
-package com.ssercan.washingmachine.domain;
+package com.ssercan.washingmachine.domain.laundry;
+import com.ssercan.washingmachine.domain.machine.Machine;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +43,7 @@ public class FromDatabaseLaundryProvider  implements  LaundryProvider{
       //STEP 4: Execute a query
       stmt = conn.createStatement();
       String sql;
-      sql = "SELECT name FROM machines";
+      sql = String.format("SELECT name FROM machines");
       ResultSet rs = stmt.executeQuery(sql);
 
       //STEP 5: Extract data from result set

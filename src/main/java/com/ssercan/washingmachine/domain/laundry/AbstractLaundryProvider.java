@@ -1,4 +1,6 @@
-package com.ssercan.washingmachine.domain;
+package com.ssercan.washingmachine.domain.laundry;
+
+import com.ssercan.washingmachine.domain.machine.Machine;
 
 import java.util.List;
 

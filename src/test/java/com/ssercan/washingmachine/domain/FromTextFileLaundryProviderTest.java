@@ -1,12 +1,12 @@
 package com.ssercan.washingmachine.domain;
 
+import com.ssercan.washingmachine.domain.laundry.FromTextFileLaundryProvider;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
 
 public class FromTextFileLaundryProviderTest {
-
-
+  //write test to assert that laundry is created
   @Test
   public void shouldStopWhenFileDoesNotExist() {
     FromTextFileLaundryProvider newProvider = new FromTextFileLaundryProvider("nonExistingFile.txt");

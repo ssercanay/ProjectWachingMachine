@@ -1,6 +1,9 @@
 package com.ssercan.washingmachine.ui.cli;
 
-import com.ssercan.washingmachine.domain.*;
+import com.ssercan.washingmachine.domain.laundry.*;
+import com.ssercan.washingmachine.domain.machine.JdbcMachineRepository;
+import com.ssercan.washingmachine.domain.machine.Machine;
+import com.ssercan.washingmachine.domain.machine.MachineRepository;
 import com.ssercan.washingmachine.ui.Operation;
 
 import java.util.List;
@@ -17,9 +20,11 @@ public class UserInterface {
    */
   public UserInterface() {
     this.scanner = new Scanner(System.in);
-
-    LaundryProvider laundryProvider = new FromDatabaseLaundryProvider();
-    this.laundryCenter = laundryProvider.provide();
+    MachineRepository machineRepository = new JdbcMachineRepository();
+    machineRepository.save(new Machine("Test1"));
+    // LaundryProvider laundryProvider = new FromDatabaseLaundryProvider();
+    // this.laundryCenter = laundryProvider.provide();
+    this.laundryCenter = (Laundry) machineRepository.findAll();
   }
 
   public void start(String provider) {
