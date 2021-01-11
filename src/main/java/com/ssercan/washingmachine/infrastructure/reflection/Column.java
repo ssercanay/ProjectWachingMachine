@@ -1,4 +1,4 @@
-package com.ssercan.washingmachine.domain;
+package com.ssercan.washingmachine.infrastructure.reflection;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

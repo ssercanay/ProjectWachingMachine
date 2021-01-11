@@ -1,8 +1,11 @@
-package com.ssercan.washingmachine.domain.machine;
+package com.ssercan.washingmachine.infrastructure.persistence;
+
+import com.ssercan.washingmachine.domain.machine.Machine;
+import com.ssercan.washingmachine.domain.machine.MachineRepository;
 
 import java.util.*;
 
-public class InMemoryMachineRepository implements MachineRepository{
+public class InMemoryMachineRepository implements MachineRepository {
   private final Map<String, Machine> machines;
 
   public InMemoryMachineRepository() {

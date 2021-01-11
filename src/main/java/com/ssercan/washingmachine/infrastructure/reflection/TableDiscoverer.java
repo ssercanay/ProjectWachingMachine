@@ -1,4 +1,4 @@
-package com.ssercan.washingmachine.domain;
+package com.ssercan.washingmachine.infrastructure.reflection;
 
 import org.reflections.Reflections;
 import java.util.Set;

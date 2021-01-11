@@ -1,8 +1,8 @@
 package com.ssercan.washingmachine.domain.machine;
 
-import com.ssercan.washingmachine.domain.Column;
-import com.ssercan.washingmachine.domain.Id;
-import com.ssercan.washingmachine.domain.Table;
+import com.ssercan.washingmachine.infrastructure.reflection.Column;
+import com.ssercan.washingmachine.infrastructure.reflection.Id;
+import com.ssercan.washingmachine.infrastructure.reflection.Table;
 
 @Table(name = "Machines")
 public class Machine {

@@ -1,15 +1,15 @@
-package com.ssercan.washingmachine.domain.machine;
+package com.ssercan.washingmachine.infrastructure.persistence;
 
 import com.ssercan.washingmachine.domain.DB;
 import com.ssercan.washingmachine.domain.finance.JdbcRepository;
+import com.ssercan.washingmachine.domain.machine.Machine;
+import com.ssercan.washingmachine.domain.machine.MachineRepository;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-public class JdbcMachineRepository implements MachineRepository{
+public class JdbcMachineRepository implements MachineRepository {
   Statement stmt = null;
   private String sql;
   private final DB database = new DB();
