@@ -15,7 +15,6 @@ public class Machine {
   private int id;
   @Column(name = "in_use")
   private boolean inUse;
-  private  double databaseTime;
 
   public Machine(String name) {
     this.name = name;
@@ -32,10 +31,25 @@ public class Machine {
   }
 
   public void setTime(double time) {
-
     if (isAvailable()) {
       if (time > 0) {
       this.time = time;
+      } else {
+        throw new RuntimeException("You can not set time to a negative number");
+      }
+    } else {
+      throw new RuntimeException("You can not set time to occupied machines");
+
+    }
+  }
+
+
+  public void setDatabaseTime(double time) {
+    if (isAvailable()) {
+      if (time > 0) {
+        this.time = time;
+        //calculateRemainedTime(); is added to test remained time
+        calculateRemainedTime();
       } else {
         throw new RuntimeException("You can not set time to a negative number");
       }
@@ -57,17 +71,13 @@ public class Machine {
   }
 
   private void remainedTime(double time) {
+    if (time < 0) {
+      this.time = 0;
+    } else {
       this.time = time;
+      }
   }
 
-  public void setDatabaseTime(double databaseTime) {
-    this.databaseTime = databaseTime;
-  }
-
-  private double getDatabaseTime() {
-    System.out.println(this.databaseTime);
-    return  this.databaseTime;
-  }
 
   public double getCurrentTime() {
     return this.currentTime + getTime() * 60000;
@@ -78,9 +88,9 @@ public class Machine {
   }
 
   private void calculateRemainedTime() {
-    double totalTime = getDatabaseTime();
+    double totalTime = getTime();
     double remainedTime = totalTime - System.currentTimeMillis();
-    this.remainedTime((int) (remainedTime / 60000));
+    remainedTime((int) (remainedTime / 60000));
   }
 
   /**

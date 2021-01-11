@@ -21,8 +21,8 @@ public class UserInterface {
     this.scanner = scanner;
     this.machineResource = machineResource;
 
-    LaundryProvider laundryProvider = new FromDatabaseLaundryProvider();
-    Laundry laundryCenter = laundryProvider.provide();
+    //LaundryProvider laundryProvider = new FromDatabaseLaundryProvider();
+   // Laundry laundryCenter = laundryProvider.provide();
     //JdbcMachineRepository jdbcRepository = new JdbcMachineRepository();
     //laundryCenter.setMachineRepository(jdbcRepository);
   }
@@ -60,8 +60,10 @@ public class UserInterface {
         if (machineResource.getMachines().isEmpty()) {
           System.out.println("\nAll machines are occupied!\n");
         } else {
+
           for (Machine machine : machineResource.getMachines()) {
-            System.out.println("\n" + machine + " is available");
+            System.out.println("\n" + "Machine ID: " + machine.getId()
+                    + " ---> " + machine + " is available");
           }
           setMachineProgram();
         }
@@ -103,16 +105,15 @@ public class UserInterface {
   }
 
   private void setMachineProgram() {
-    System.out.print("\nChoose a machine please: ");
+    System.out.print("\nPlease type the ID of machine you want to choose: ");
     int choseMachine = scanner.nextInt();
     System.out.print("\nSet a time please: ");
     int setTime = scanner.nextInt();
     int machineLowerIndex = 0;
-    int machineUpperIndex = 4;
     int timeCantBeLessThanOne = 0;
 
     if (choseMachine > machineLowerIndex
-        && choseMachine < machineUpperIndex && setTime > timeCantBeLessThanOne) {
+         && setTime > timeCantBeLessThanOne) {
       machineResource.putUseMachine(new UseMachineRequest(choseMachine, setTime));
       System.out.println("\nWe set your program, please come in " + setTime
               + " minutes to take your laundries.");

@@ -16,24 +16,28 @@ public class JdbcMachineRepository implements MachineRepository {
   public List<Machine> findAll() {
 
     List<Machine> entryList = new ArrayList<>();
-    sql = "SELECT name, id FROM machines";
-
+    sql = "SELECT name, id, remained_time FROM machines";
+    double remainedTime = 0;
     try (Connection con = DriverManager.getConnection(DB_URL, "root", "example");
         Statement statement = con.createStatement(); ) {
 
-      try (ResultSet rs = statement.executeQuery(sql);) {
+      try (ResultSet resultSet = statement.executeQuery(sql);) {
 
-        while (rs.next()) {
-          String row = rs.getString("name");
-          int id = rs.getInt("id");
-
+        while (resultSet.next()) {
+          String row = resultSet.getString("name");
+          int id = resultSet.getInt("id");
+          remainedTime = resultSet.getDouble("remained_time");
           Machine toAdd = new Machine(row);
           toAdd.setId(id);
+
+          if (remainedTime > 0){
+            toAdd.setDatabaseTime(remainedTime);
+
+          }
           entryList.add(toAdd);
+
         }
 
-      } catch (SQLException e) {
-        e.printStackTrace();
       }
     } catch (SQLException e) {
       e.printStackTrace();
@@ -49,6 +53,7 @@ public class JdbcMachineRepository implements MachineRepository {
     double remainedTime = 0;
     int idIntegerConversion = 0;
     sql = String.format("SELECT name, remained_time FROM machines WHERE id = %d", idIntegerConversion);
+
     try (Connection con = DriverManager.getConnection(DB_URL, "root", "example");
         Statement statement = con.createStatement(); ) {
       try (ResultSet resultSet = statement.executeQuery(sql); ) {
@@ -63,15 +68,15 @@ public class JdbcMachineRepository implements MachineRepository {
         }
 
 
-      } catch (SQLException e) {
-        e.printStackTrace();
       }
     } catch (SQLException e) {
       e.printStackTrace();
     }
-
     Machine willReturn = new Machine(machineName);
-    willReturn.setDatabaseTime(remainedTime);
+    if (remainedTime > 0){
+      willReturn.setDatabaseTime(remainedTime);
+
+    }
     willReturn.setId(idIntegerConversion);
 
     return willReturn;
@@ -84,11 +89,8 @@ public class JdbcMachineRepository implements MachineRepository {
     sql = String.format("DELETE FROM machines WHERE id = %d", idIntegerConversion);
     try (Connection con = DriverManager.getConnection(DB_URL, "root", "example");
          Statement statement = con.createStatement(); ) {
-      try (ResultSet resultSet = statement.executeQuery(sql); ) {
+      statement.executeUpdate(sql);
 
-    } catch (SQLException e) {
-        e.printStackTrace();
-      }
     } catch (SQLException e) {
       e.printStackTrace();
     }
@@ -97,16 +99,17 @@ public class JdbcMachineRepository implements MachineRepository {
 
   @Override
   public Machine save(Machine machine) {
-    String machineName = machine.getName();
+    int machineId = machine.getId();
     double machineTime = machine.getCurrentTime();
+    String machineName = machine.getName();
     int newId = 0;
     if (machine.getId() != 0) {
 
-      sql = String.format("UPDATE machines SET remained_time = %f WHERE name = '%s'",
-              machineTime, machineName);
+      sql = String.format("UPDATE machines SET remained_time = %f WHERE id = %d",
+              machineTime, machineId);
     } else {
 
-      sql = String.format("INSERT INTO machines(name, remained_time) VALUES('%s', %f)", machineName, machineTime);
+      sql = String.format("INSERT INTO machines(name, remained_time) VALUES('%s', %d)", machineName, 0);
     }
 
     try (Connection con = DriverManager.getConnection(DB_URL, "root", "example");
@@ -120,9 +123,7 @@ public class JdbcMachineRepository implements MachineRepository {
         newId = resultSet.getInt(1);
       }
 
-    }catch (SQLException e) {
-        e.printStackTrace();
-      }
+    }
     } catch (SQLException e) {
       e.printStackTrace();
     }

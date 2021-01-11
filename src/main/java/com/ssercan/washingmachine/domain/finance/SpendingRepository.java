@@ -1,7 +1,5 @@
 package com.ssercan.washingmachine.domain.finance;
 
-import com.ssercan.washingmachine.domain.DB;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
