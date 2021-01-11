@@ -67,8 +67,11 @@ public class UserInterface {
         }
 
       } else if (operation == 2) {
+        
         for (Machine machine : machineResource.getMachines()) {
-          System.out.println("\n" + machine.getName() + ":" + " "
+
+          System.out.println("\n" + "Machine ID: " + machine.getId()
+                  + " ---> " + machine.getName() + ":" + " "
                   + machine.getTime() + " minutes left");
         }
       } else if (operation == 3) {

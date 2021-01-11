@@ -1,7 +1,5 @@
 package com.ssercan.washingmachine.infrastructure.persistence;
 
-import com.ssercan.washingmachine.domain.DB;
-import com.ssercan.washingmachine.domain.finance.JdbcRepository;
 import com.ssercan.washingmachine.domain.machine.Machine;
 import com.ssercan.washingmachine.domain.machine.MachineRepository;
 
@@ -10,43 +8,39 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JdbcMachineRepository implements MachineRepository {
-  Statement stmt = null;
   private String sql;
-  private final DB database = new DB();
+  static final String DB_URL = "jdbc:mysql://localhost:3307/sercan_db";
 
-  public JdbcMachineRepository() {
-    findAll();
-  }
 
   @Override
   public List<Machine> findAll() {
 
     List<Machine> entryList = new ArrayList<>();
+    sql = "SELECT name, id FROM machines";
 
-    try{
+    try (Connection con = DriverManager.getConnection(DB_URL, "root", "example");
+        Statement statement = con.createStatement(); ) {
 
-      stmt = database.connectDatabase().createStatement();
+      try (ResultSet rs = statement.executeQuery(sql);) {
 
-      sql = "SELECT name, id FROM machines";
-      ResultSet rs = stmt.executeQuery(sql);
+        while (rs.next()) {
+          String row = rs.getString("name");
+          int id = rs.getInt("id");
 
-      //STEP 5: Extract data from result set
-      while(rs.next()){
-        //Retrieve by column name
-        String row = rs.getString("name");
-        int id = rs.getInt("id");
-        //Display values
-        Machine toAdd = new Machine(row);
-        toAdd.setId(id);
-        entryList.add(toAdd);
+          Machine toAdd = new Machine(row);
+          toAdd.setId(id);
+          entryList.add(toAdd);
+        }
+
+      } catch (SQLException e) {
+        e.printStackTrace();
       }
-      database.closeConnection();
-    } catch(Exception se){
-     se.printStackTrace();
-    }//end try
+    } catch (SQLException e) {
+      e.printStackTrace();
 
+    }
     return entryList;
-  }
+    }
 
   @Override
   public Machine findById(String id) {
@@ -54,46 +48,49 @@ public class JdbcMachineRepository implements MachineRepository {
     String machineName = null;
     double remainedTime = 0;
     int idIntegerConversion = 0;
+    sql = String.format("SELECT name, remained_time FROM machines WHERE id = %d", idIntegerConversion);
+    try (Connection con = DriverManager.getConnection(DB_URL, "root", "example");
+        Statement statement = con.createStatement(); ) {
+      try (ResultSet resultSet = statement.executeQuery(sql); ) {
 
-    try{
+        idIntegerConversion = Integer.parseInt(id);
 
-      stmt = database.connectDatabase().createStatement();
-      Statement statement = database.connectDatabase().createStatement();
-      idIntegerConversion = Integer.parseInt(id);
-      sql = String.format("SELECT name, remained_time FROM machines WHERE id = %d", idIntegerConversion);
-      ResultSet nameResultSet = stmt.executeQuery(sql);
 
-      while(nameResultSet.next()){
-        //Retrieve by column name
-        machineName = nameResultSet.getString("name");
-        remainedTime = nameResultSet.getDouble("remained_time");
+        while (resultSet.next()) {
+          // Retrieve by column name
+          machineName = resultSet.getString("name");
+          remainedTime = resultSet.getDouble("remained_time");
+        }
 
+
+      } catch (SQLException e) {
+        e.printStackTrace();
       }
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
 
-      database.closeConnection();
-
-      }catch(Exception se){
-        se.printStackTrace();
-      }
     Machine willReturn = new Machine(machineName);
     willReturn.setDatabaseTime(remainedTime);
     willReturn.setId(idIntegerConversion);
+
     return willReturn;
-  }
+    }
 
   @Override
   public Machine deleteById(String id) {
     Machine deletedMachine = findById(id);
-    try{
+    int idIntegerConversion = Integer.parseInt(id);
+    sql = String.format("DELETE FROM machines WHERE id = %d", idIntegerConversion);
+    try (Connection con = DriverManager.getConnection(DB_URL, "root", "example");
+         Statement statement = con.createStatement(); ) {
+      try (ResultSet resultSet = statement.executeQuery(sql); ) {
 
-
-      stmt = database.connectDatabase().createStatement();
-      int idIntegerConversion = Integer.parseInt(id);
-      sql = String.format("DELETE FROM machines WHERE id = %d", idIntegerConversion);
-      stmt.executeUpdate(sql);
-      database.closeConnection();
-    }catch(Exception se){
-      se.printStackTrace();
+    } catch (SQLException e) {
+        e.printStackTrace();
+      }
+    } catch (SQLException e) {
+      e.printStackTrace();
     }
     return deletedMachine;
   }
@@ -103,28 +100,31 @@ public class JdbcMachineRepository implements MachineRepository {
     String machineName = machine.getName();
     double machineTime = machine.getCurrentTime();
     int newId = 0;
-    try{
-      if (machine.getId() != 0) {
+    if (machine.getId() != 0) {
 
-        sql = String.format("UPDATE machines SET remained_time = %f WHERE name = '%s'",
-                machineTime, machineName);
-      } else {
+      sql = String.format("UPDATE machines SET remained_time = %f WHERE name = '%s'",
+              machineTime, machineName);
+    } else {
 
-        sql = String.format("INSERT INTO machines(name, remained_time) VALUES('%s', %f)", machineName, machineTime);
+      sql = String.format("INSERT INTO machines(name, remained_time) VALUES('%s', %f)", machineName, machineTime);
+    }
+
+    try (Connection con = DriverManager.getConnection(DB_URL, "root", "example");
+         PreparedStatement pInsertOid = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+         ) {
+     pInsertOid.executeUpdate();
+
+     try (ResultSet resultSet = pInsertOid.getGeneratedKeys(); ) {
+
+      if (resultSet.next()) {
+        newId = resultSet.getInt(1);
       }
-      Connection connection = database.connectDatabase();
-      PreparedStatement pInsertOid = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-      pInsertOid.executeUpdate();
-      ResultSet rs = pInsertOid.getGeneratedKeys();
-      if (rs.next()) {
-        newId = rs.getInt(1);
+
+    }catch (SQLException e) {
+        e.printStackTrace();
       }
-
-      //connection.commit();
-      database.closeConnection();
-
-    }catch(SQLException se){
-      se.printStackTrace();
+    } catch (SQLException e) {
+      e.printStackTrace();
     }
     return findById("" + newId);
   }
