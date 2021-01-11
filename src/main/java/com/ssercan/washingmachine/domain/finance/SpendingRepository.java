@@ -48,7 +48,6 @@ public class SpendingRepository implements JdbcRepository<Spending>{
       String sql = String.format("SELECT * FROM spendings WHERE id = %d", idIntegerConversion);
       ResultSet rs = stmt.executeQuery(sql);
       while(rs.next()){
-        //Retrieve by row
         spending = (Spending) rs;
 
       }
