@@ -31,7 +31,6 @@ public class SpendingRepository implements JdbcRepository<Spending>{
       }
       database.closeConnection();
     } catch(Exception se){
-      //Handle errors for JDBC
       se.printStackTrace();
     }
 
