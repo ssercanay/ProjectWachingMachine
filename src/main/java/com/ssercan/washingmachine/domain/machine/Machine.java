@@ -1,17 +1,26 @@
 package com.ssercan.washingmachine.domain.machine;
 
+import com.ssercan.washingmachine.domain.Column;
+import com.ssercan.washingmachine.domain.Id;
 import com.ssercan.washingmachine.domain.Table;
 
 @Table(name = "Machines")
 public class Machine {
+  @Column(name = "name", unique = true, nullable = false)
   private final String name;
   private double time;
   private final double currentTime;
+  @Id
+  @Column(name = "id", unique = true, nullable = false)
   private int id;
+  @Column(name = "in_use")
+  private boolean inUse;
+  private  double databaseTime;
 
   public Machine(String name) {
     this.name = name;
     this.currentTime = System.currentTimeMillis();
+
   }
 
   public void setId(int id) {
@@ -51,8 +60,17 @@ public class Machine {
       this.time = time;
   }
 
-  private double getCurrentTime() {
-    return this.currentTime;
+  public void setDatabaseTime(double databaseTime) {
+    this.databaseTime = databaseTime;
+  }
+
+  private double getDatabaseTime() {
+    System.out.println(this.databaseTime);
+    return  this.databaseTime;
+  }
+
+  public double getCurrentTime() {
+    return this.currentTime + getTime() * 60000;
   }
 
   private boolean isOccupied() {
@@ -60,7 +78,7 @@ public class Machine {
   }
 
   private void calculateRemainedTime() {
-    double totalTime = getCurrentTime() + getTime() * 60000;
+    double totalTime = getDatabaseTime();
     double remainedTime = totalTime - System.currentTimeMillis();
     this.remainedTime((int) (remainedTime / 60000));
   }

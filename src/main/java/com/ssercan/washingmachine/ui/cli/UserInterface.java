@@ -3,7 +3,6 @@ package com.ssercan.washingmachine.ui.cli;
 import com.ssercan.washingmachine.domain.laundry.*;
 import com.ssercan.washingmachine.domain.machine.JdbcMachineRepository;
 import com.ssercan.washingmachine.domain.machine.Machine;
-import com.ssercan.washingmachine.domain.machine.MachineRepository;
 import com.ssercan.washingmachine.ui.Operation;
 
 import java.util.List;
@@ -14,17 +13,18 @@ public class UserInterface {
 
   private final Laundry laundryCenter;
   private final Scanner scanner;
+  private JdbcMachineRepository jdbcRepository;
 
   /**
    * This class is ui for washing machines.
    */
   public UserInterface() {
     this.scanner = new Scanner(System.in);
-    MachineRepository machineRepository = new JdbcMachineRepository();
-    machineRepository.save(new Machine("Test1"));
-    // LaundryProvider laundryProvider = new FromDatabaseLaundryProvider();
-    // this.laundryCenter = laundryProvider.provide();
-    this.laundryCenter = (Laundry) machineRepository.findAll();
+
+    LaundryProvider laundryProvider = new FromDatabaseLaundryProvider();
+    this.laundryCenter = laundryProvider.provide();
+    this.jdbcRepository = new JdbcMachineRepository();
+    this.laundryCenter.setMachineRepository(jdbcRepository);
   }
 
   public void start(String provider) {
@@ -42,6 +42,7 @@ public class UserInterface {
   public void start() {
     System.out.println("\nWelcome to laundry room\n");
     setOperation();
+
   }
 
   private void setOperation() {
@@ -67,13 +68,16 @@ public class UserInterface {
         }
 
       } else if (operation == 2) {
-        List<Machine> listOfRemainedTimeOfOccupiedMachines = laundryCenter.getOccupiedMachines();
-        for (Machine machine : listOfRemainedTimeOfOccupiedMachines) {
-          System.out.println("\n" + machine.getName() + ":"
+          List<Machine> listOfRemainedTimeOfOccupiedMachines = laundryCenter.getOccupiedMachines();
+          for (Machine machine : listOfRemainedTimeOfOccupiedMachines) {
+            System.out.println("\n" + machine.getName() + ":"
                   + " " + machine.getTime() + " minutes left");
         }
+      } else if (operation == 3) {
+          addMachine();
+
       } else {
-        System.out.println("\nPlease enter a valid operation\n");
+          System.out.println("\nPlease enter a valid operation\n");
       }
     }
 
@@ -84,10 +88,18 @@ public class UserInterface {
             "\n[0] - Exit the room\n"
                     + "[1] - Check available machines"
                     + "\n"
-                    + "[2] - Check remaining times for machines\n";
+                    + "[2] - Check remaining times for machines\n"
+                    + "[3] - Add new machine\n";
     System.out.println(menu);
   }
 
+
+  private void addMachine() {
+    scanner.nextLine();
+    System.out.print("Please add name of machine: ");
+    String newMachine = scanner.nextLine();
+    jdbcRepository.save(new Machine(newMachine));
+  }
 
   private void setMachineProgram() {
     System.out.print("\nChoose a machine please: ");

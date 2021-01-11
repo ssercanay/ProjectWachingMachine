@@ -1,5 +1,6 @@
 package com.ssercan.washingmachine.domain.laundry;
 
+import com.ssercan.washingmachine.domain.machine.JdbcMachineRepository;
 import com.ssercan.washingmachine.domain.machine.Machine;
 
 import java.util.ArrayList;
@@ -7,15 +8,21 @@ import java.util.List;
 
 public class Laundry {
   private final List<Machine> machines;
+  private JdbcMachineRepository jdbcRepository;
 
   public Laundry(List<Machine> machines) {
     this.machines = machines;
 
   }
 
+
   public void setMachine(int choseMachine, int setTime) {
-    machines.get(choseMachine - 1).setTime(setTime);
+    Machine chooseMachine = machines.get(choseMachine - 1);
+    chooseMachine.setTime(setTime);
+    jdbcRepository.save(chooseMachine);
   }
+
+
 
   public List<Machine> getAvailableMachines() {
     List<Machine> availableMachines = new ArrayList<>();
@@ -37,5 +44,8 @@ public class Laundry {
     return occupiedMachines;
   }
 
+  public void setMachineRepository(JdbcMachineRepository jdbcRepository) {
+    this.jdbcRepository = jdbcRepository;
+  }
 }
 

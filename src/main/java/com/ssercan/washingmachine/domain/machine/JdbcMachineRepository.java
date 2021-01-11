@@ -1,22 +1,22 @@
 package com.ssercan.washingmachine.domain.machine;
 
-import com.ssercan.washingmachine.domain.Table;
+import com.ssercan.washingmachine.domain.DB;
+import com.ssercan.washingmachine.domain.finance.JdbcRepository;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
+import java.util.Map;
 
 public class JdbcMachineRepository implements MachineRepository{
-  static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-  static final String DB_URL = "jdbc:mysql://localhost:3307/sercan_db";
-
-  //  Database credentials
-  static final String USER = "root";
-  static final String PASS = "example";
-  Connection conn = null;
   Statement stmt = null;
   private String sql;
+  private final DB database = new DB();
+
+  public JdbcMachineRepository() {
+    findAll();
+  }
 
   @Override
   public List<Machine> findAll() {
@@ -24,81 +24,61 @@ public class JdbcMachineRepository implements MachineRepository{
     List<Machine> entryList = new ArrayList<>();
 
     try{
-      //STEP 3: Open a connection
-      conn = DriverManager.getConnection(DB_URL,USER,PASS);
 
-      //STEP 4: Execute a query
-      stmt = conn.createStatement();
+      stmt = database.connectDatabase().createStatement();
 
-      sql = "SELECT name FROM machines";
+      sql = "SELECT name, id FROM machines";
       ResultSet rs = stmt.executeQuery(sql);
 
       //STEP 5: Extract data from result set
       while(rs.next()){
         //Retrieve by column name
         String row = rs.getString("name");
+        int id = rs.getInt("id");
         //Display values
-
-        entryList.add(new Machine(row));
+        Machine toAdd = new Machine(row);
+        toAdd.setId(id);
+        entryList.add(toAdd);
       }
-      //STEP 6: Clean-up environment
-      rs.close();
-      stmt.close();
-      conn.close();
+      database.closeConnection();
     } catch(Exception se){
-      //Handle errors for JDBC
-      se.printStackTrace();
-    }//Handle errors for Class.forName
-    finally{
-      //finally block used to close resources
-      try{
-        if(stmt!=null)
-          stmt.close();
-      }catch(SQLException ignored){
-      }// nothing we can do
-      try{
-        if(conn!=null)
-          conn.close();
-      }catch(SQLException se){
-        se.printStackTrace();
-      }//end finally try
+     se.printStackTrace();
     }//end try
+
     return entryList;
   }
 
   @Override
   public Machine findById(String id) {
+
     String machineName = null;
+    double remainedTime = 0;
+    int idIntegerConversion = 0;
+
     try{
-      //STEP 2: Register JDBC driver
-      //STEP 3: Open a connection
-      conn = DriverManager.getConnection(DB_URL,USER,PASS);
 
-      //STEP 4: Execute a query
-      stmt = conn.createStatement();
+      stmt = database.connectDatabase().createStatement();
+      Statement statement = database.connectDatabase().createStatement();
+      idIntegerConversion = Integer.parseInt(id);
+      sql = String.format("SELECT name, remained_time FROM machines WHERE id = %d", idIntegerConversion);
+      ResultSet nameResultSet = stmt.executeQuery(sql);
 
-      sql = String.format("SELECT name FROM machines WHERE id = '%s'", id);
-      ResultSet rs = stmt.executeQuery(sql);
-
-      while(rs.next()){
+      while(nameResultSet.next()){
         //Retrieve by column name
-        machineName = rs.getString("name");
-        //Display values
+        machineName = nameResultSet.getString("name");
+        remainedTime = nameResultSet.getDouble("remained_time");
 
       }
-      //STEP 5: Extract data from result set
-        //Retrieve by column name
-        //Display values
 
-      rs.close();
-      stmt.close();
-      conn.close();
+      database.closeConnection();
 
       }catch(Exception se){
         se.printStackTrace();
       }
-    
-    return new Machine(machineName);
+    Machine willReturn = new Machine(machineName);
+    willReturn.setDatabaseTime(remainedTime);
+    willReturn.setId(idIntegerConversion);
+    return willReturn;
   }
 
   @Override
@@ -106,18 +86,12 @@ public class JdbcMachineRepository implements MachineRepository{
     Machine deletedMachine = findById(id);
     try{
 
-      //STEP 3: Open a connection
-      conn = DriverManager.getConnection(DB_URL,USER,PASS);
 
-      //STEP 4: Execute a query
-      stmt = conn.createStatement();
-
-      sql = String.format("DELETE FROM machines WHERE id = '%s'", id);
+      stmt = database.connectDatabase().createStatement();
+      int idIntegerConversion = Integer.parseInt(id);
+      sql = String.format("DELETE FROM machines WHERE id = %d", idIntegerConversion);
       stmt.executeUpdate(sql);
-
-      stmt.close();
-      conn.close();
-
+      database.closeConnection();
     }catch(Exception se){
       se.printStackTrace();
     }
@@ -127,24 +101,35 @@ public class JdbcMachineRepository implements MachineRepository{
   @Override
   public Machine save(Machine machine) {
     String machineName = machine.getName();
-    String id = UUID.randomUUID().toString();
-
+    double machineTime = machine.getCurrentTime();
+    int newId = 0;
     try{
-      //STEP 3: Open a connection
-      conn = DriverManager.getConnection(DB_URL,USER,PASS);
+      if (machine.getId() != 0) {
 
-      //STEP 4: Execute a query
-      stmt = conn.createStatement();
+        sql = String.format("UPDATE machines SET remained_time = %f WHERE name = '%s'",
+                machineTime, machineName);
+      } else {
 
-      //update machine if it is already exist in database
-      sql = String.format("INSERT INTO machines(name) VALUES('%s')", machineName);
-      stmt.executeUpdate(sql);
-      stmt.close();
-      conn.close();
+        sql = String.format("INSERT INTO machines(name, remained_time) VALUES('%s', %f)", machineName, machineTime);
+      }
+      Connection connection = database.connectDatabase();
+      PreparedStatement pInsertOid = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+      pInsertOid.executeUpdate();
+      ResultSet rs = pInsertOid.getGeneratedKeys();
+      if (rs.next()) {
+        newId = rs.getInt(1);
+      }
+
+      //connection.commit();
+      database.closeConnection();
 
     }catch(SQLException se){
       se.printStackTrace();
     }
-    return null;
+    return findById("" + newId);
   }
+
+
 }
+
+

@@ -1,6 +1,7 @@
 package com.ssercan.washingmachine;
 
 import com.ssercan.washingmachine.domain.TableDiscoverer;
+
 import com.ssercan.washingmachine.ui.cli.UserInterface;
 
 public class WashingMachine {
@@ -13,6 +14,9 @@ public class WashingMachine {
 
     UserInterface userInterface = new UserInterface();
     userInterface.start();
+
+    TableDiscoverer tableDiscoverer = new TableDiscoverer();
+    tableDiscoverer.discover();
   }
 }
 
