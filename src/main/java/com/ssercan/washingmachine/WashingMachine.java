@@ -2,8 +2,7 @@ package com.ssercan.washingmachine;
 
 import com.ssercan.washingmachine.application.LaundryManager;
 import com.ssercan.washingmachine.domain.machine.MachineRepository;
-import com.ssercan.washingmachine.infrastructure.persistence.JdbcMachineRepository;
-import com.ssercan.washingmachine.infrastructure.reflection.TableDiscoverer;
+import com.ssercan.washingmachine.infrastructure.persistence.jdbc.JdbcMachineRepository;
 
 import com.ssercan.washingmachine.rest.MachineResource;
 import com.ssercan.washingmachine.ui.cli.UserInterface;

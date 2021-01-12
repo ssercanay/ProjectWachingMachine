@@ -2,9 +2,11 @@ package com.ssercan.washingmachine.application;
 
 import com.ssercan.washingmachine.domain.machine.Machine;
 import com.ssercan.washingmachine.domain.machine.MachineRepository;
+import com.ssercan.washingmachine.infrastructure.reflection.Component;
 import com.ssercan.washingmachine.rest.UseMachineRequest;
 import java.util.List;
 
+@Component
 public class LaundryManager {
   private final MachineRepository machineRepository;
 

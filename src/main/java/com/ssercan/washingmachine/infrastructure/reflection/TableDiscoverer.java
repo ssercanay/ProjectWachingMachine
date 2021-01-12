@@ -8,10 +8,10 @@ public class TableDiscoverer{
   public void discover() {
 
     Reflections reflections = new Reflections("com.ssercan.washingmachine.domain.machine");
-    Set<Class<?>> challengeClasses = reflections.getTypesAnnotatedWith(Table.class);
+    Set<Class<?>> tableNotatedClasses = reflections.getTypesAnnotatedWith(Table.class);
 
-    for (Class klass: challengeClasses) {
-      Table getAnnotation = (Table) klass.getDeclaredAnnotation(Table.class);
+    for (Class<?> klass: tableNotatedClasses) {
+      Table getAnnotation = klass.getDeclaredAnnotation(Table.class);
       System.out.println(klass.getSimpleName() + " = " + getAnnotation.name());
     }
 

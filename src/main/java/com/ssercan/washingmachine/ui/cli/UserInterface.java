@@ -1,7 +1,6 @@
 package com.ssercan.washingmachine.ui.cli;
 
 import com.ssercan.washingmachine.domain.laundry.*;
-import com.ssercan.washingmachine.infrastructure.persistence.JdbcMachineRepository;
 import com.ssercan.washingmachine.domain.machine.Machine;
 import com.ssercan.washingmachine.rest.MachineResource;
 import com.ssercan.washingmachine.rest.UseMachineRequest;

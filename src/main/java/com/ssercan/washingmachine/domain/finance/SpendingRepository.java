@@ -1,59 +1,63 @@
 package com.ssercan.washingmachine.domain.finance;
 
+import com.ssercan.washingmachine.infrastructure.reflection.Component;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class SpendingRepository implements JdbcRepository<Spending>{
   Statement stmt = null;
   private String sql;
-  private final DB database = new DB();
+  static final String DB_URL = "jdbc:mysql://localhost:3307/sercan_db";
 
   @Override
   public List<Spending> findAll(){
     List<Spending> entryList = new ArrayList<>();
+    sql = "SELECT * FROM spendings";
 
-    try{
-      stmt = database.connectDatabase().createStatement();
+    try (Connection con = DriverManager.getConnection(DB_URL, "root", "example");
+         Statement statement = con.createStatement(); ) {
 
-      sql = "SELECT * FROM spendings";
-      ResultSet rs = stmt.executeQuery(sql);
+      try (ResultSet resultSet = statement.executeQuery(sql);) {
 
       //STEP 5: Extract data from result set
-      while(rs.next()){
+      while(resultSet.next()){
         //Retrieve by column name
-        Spending row = (Spending) rs;
+        Spending row = (Spending) resultSet;
         //Display values
 
         entryList.add(row);
       }
-      database.closeConnection();
-    } catch(Exception se){
-      se.printStackTrace();
-    }
+    } } catch (SQLException e) {
+        e.printStackTrace();
 
+      }
     return entryList;
   }
 
   @Override
   public Spending findById(String id) {
     Spending spending = null;
-    try{
+    int idIntegerConversion = Integer.parseInt(id);
 
+    String sql = String.format("SELECT * FROM spendings WHERE id = %d", idIntegerConversion);
+
+    try (Connection con = DriverManager.getConnection(DB_URL, "root", "example");
+         Statement statement = con.createStatement(); ) {
+
+      try (ResultSet resultSet = statement.executeQuery(sql);) {
       //STEP 4: Execute a query
-      Statement stmt = database.connectDatabase().createStatement();
-      int idIntegerConversion = Integer.parseInt(id);
-      String sql = String.format("SELECT * FROM spendings WHERE id = %d", idIntegerConversion);
-      ResultSet rs = stmt.executeQuery(sql);
-      while(rs.next()){
-        spending = (Spending) rs;
+      while(resultSet.next()){
+        spending = (Spending) resultSet;
 
       }
 
-      database.closeConnection();
 
-    }catch(Exception se){
-      se.printStackTrace();
+    } } catch (SQLException e) {
+      e.printStackTrace();
+
     }
 
     return spending;
@@ -62,39 +66,39 @@ public class SpendingRepository implements JdbcRepository<Spending>{
   @Override
   public Spending deleteById(String id) {
     Spending deletedSpending = findById(id);
-    try{
+    int idIntegerConversion = Integer.parseInt(id);
+    sql = String.format("DELETE FROM spendings WHERE id = %d", idIntegerConversion);
 
-      //STEP 4: Execute a query
-      stmt = database.connectDatabase().createStatement();
-      int idIntegerConversion = Integer.parseInt(id);
-      sql = String.format("DELETE FROM spendings WHERE id = %d", idIntegerConversion);
-      stmt.executeUpdate(sql);
-      database.closeConnection();
-    }catch(Exception se){
-      se.printStackTrace();
-    }
+    try (Connection con = DriverManager.getConnection(DB_URL, "root", "example");
+         Statement statement = con.createStatement(); ) {
+
+        statement.executeUpdate(sql);
+
+      } catch (SQLException e) {
+        e.printStackTrace();
+      }
     return deletedSpending;
   }
 
   @Override
   public Spending save(Spending input) {
-    //int spending = (int) input;
     int newId = 0;
-    try{
-      
-     // sql = String.format("INSERT INTO spendings(amount) VALUES(%d)", spending);
-      sql = String.format("INSERT INTO spendings VALUES(%s)", input);
+    sql = String.format("INSERT INTO spendings VALUES(%s)", input);
 
-      PreparedStatement pInsertOid = database.connectDatabase().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+    try (Connection con = DriverManager.getConnection(DB_URL, "root", "example");
+         PreparedStatement pInsertOid = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+    ) {
       pInsertOid.executeUpdate();
-      ResultSet rs = pInsertOid.getGeneratedKeys();
-      if (rs.next()) {
-        newId = rs.getInt(1);
-      }
-      database.closeConnection();
 
-    }catch(SQLException se){
-      se.printStackTrace();
+      try (ResultSet resultSet = pInsertOid.getGeneratedKeys(); ) {
+
+      if (resultSet.next()) {
+        newId = resultSet.getInt(1);
+      }
+
+    }
+    } catch (SQLException e) {
+      e.printStackTrace();
     }
     return findById("" + newId);
   }
