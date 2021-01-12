@@ -8,7 +8,7 @@ import java.util.*;
 
 @Component
 public class InMemoryMachineRepository implements MachineRepository {
-  private final Map<String, Machine> machines;
+  private final Map<Integer, Machine> machines;
 
   public InMemoryMachineRepository() {
     machines = new HashMap<>();
@@ -20,8 +20,9 @@ public class InMemoryMachineRepository implements MachineRepository {
     return new ArrayList<>(machines.values());
   }
 
+
   @Override
-  public Machine findById(String id) {
+  public Machine findById(Integer id) {
     if (machines.containsKey(id)){
       return machines.get(id);
     } else {
@@ -31,7 +32,7 @@ public class InMemoryMachineRepository implements MachineRepository {
   }
 
   @Override
-  public Machine deleteById(String id) {
+  public Machine deleteById(Integer id) {
     Machine deletedMachine;
     if (machines.containsKey(id)){
       deletedMachine = machines.get(id);
@@ -45,8 +46,7 @@ public class InMemoryMachineRepository implements MachineRepository {
 
   @Override
   public Machine save(Machine machine) {
-    String machineName = machine.getName();
-    String id = UUID.randomUUID().toString();
+    Integer id = machine.getId();
 
     if (machines.containsValue(machine)){
       machines.replace(id, machine);
@@ -54,7 +54,7 @@ public class InMemoryMachineRepository implements MachineRepository {
       machines.put(id, machine);
     }
 
-    return machines.get(machineName);
+    return machines.get(id);
   }
 
 

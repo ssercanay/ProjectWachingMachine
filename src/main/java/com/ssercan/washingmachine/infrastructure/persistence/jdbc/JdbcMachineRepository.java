@@ -49,18 +49,15 @@ public class JdbcMachineRepository implements MachineRepository {
     }
 
   @Override
-  public Machine findById(String id) {
+  public Machine findById(Integer id) {
 
     String machineName = null;
     double remainedTime = 0;
-    int idIntegerConversion = 0;
-    sql = String.format("SELECT name, remained_time FROM machines WHERE id = %d", idIntegerConversion);
+    sql = String.format("SELECT name, remained_time FROM machines WHERE id = %d", id);
 
     try (Connection con = DriverManager.getConnection(DB_URL, "root", "example");
         Statement statement = con.createStatement(); ) {
       try (ResultSet resultSet = statement.executeQuery(sql); ) {
-
-        idIntegerConversion = Integer.parseInt(id);
 
 
         while (resultSet.next()) {
@@ -79,16 +76,15 @@ public class JdbcMachineRepository implements MachineRepository {
       willReturn.setDatabaseTime(remainedTime);
 
     }
-    willReturn.setId(idIntegerConversion);
+    willReturn.setId(id);
 
     return willReturn;
     }
 
   @Override
-  public Machine deleteById(String id) {
+  public Machine deleteById(Integer id) {
     Machine deletedMachine = findById(id);
-    int idIntegerConversion = Integer.parseInt(id);
-    sql = String.format("DELETE FROM machines WHERE id = %d", idIntegerConversion);
+    sql = String.format("DELETE FROM machines WHERE id = %d", id);
     try (Connection con = DriverManager.getConnection(DB_URL, "root", "example");
          Statement statement = con.createStatement(); ) {
       statement.executeUpdate(sql);
@@ -129,7 +125,7 @@ public class JdbcMachineRepository implements MachineRepository {
     } catch (SQLException e) {
       e.printStackTrace();
     }
-    return findById("" + newId);
+    return findById(newId);
   }
 
 

@@ -19,7 +19,7 @@ public class LaundryManager {
   }
 
   public void setMachineProgram(UseMachineRequest machineRequest) {
-    Machine chooseMachine = machineRepository.findById("" + machineRequest.getMachineId());
+    Machine chooseMachine = machineRepository.findById(machineRequest.getMachineId());
     chooseMachine.setTime(machineRequest.getMachineProgramTime());
     machineRepository.save(chooseMachine);
   }
