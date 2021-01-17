@@ -21,9 +21,9 @@ public class JdbcMachineRepository implements MachineRepository {
     sql = "SELECT name, id, remained_time FROM machines";
     double remainedTime = 0;
     try (Connection con = DriverManager.getConnection(DB_URL, "root", "example");
-        Statement statement = con.createStatement(); ) {
+        Statement statement = con.createStatement()) {
 
-      try (ResultSet resultSet = statement.executeQuery(sql);) {
+      try (ResultSet resultSet = statement.executeQuery(sql)) {
 
         while (resultSet.next()) {
           String row = resultSet.getString("name");

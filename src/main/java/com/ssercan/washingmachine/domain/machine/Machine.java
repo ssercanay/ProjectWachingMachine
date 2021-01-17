@@ -1,18 +1,15 @@
 package com.ssercan.washingmachine.domain.machine;
 
-import com.ssercan.washingmachine.infrastructure.reflection.Column;
-import com.ssercan.washingmachine.infrastructure.reflection.Id;
-import com.ssercan.washingmachine.infrastructure.reflection.Table;
 
-import javax.persistence.Entity;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "Machines")
+@Table(name = "machines")
 public class Machine implements Serializable {
   @Column(name = "name", unique = true, nullable = false)
   private String name;
+  @Column(name = "remained_time")
   private double time;
 
   @Transient
@@ -20,8 +17,7 @@ public class Machine implements Serializable {
   @Id
   @Column(name = "id", unique = true, nullable = false)
   private int id;
-  @Column(name = "in_use")
-  private boolean inUse;
+
 
   public Machine(String name) {
     this.name = name;
@@ -37,7 +33,7 @@ public class Machine implements Serializable {
     this.id = id;
   }
 
-  @javax.persistence.Id
+
   public int getId() {
     return this.id;
   }
@@ -82,7 +78,7 @@ public class Machine implements Serializable {
     return this.name;
   }
 
-  @Transient
+
   public boolean isAvailable() {
     return getTime() == 0;
   }
@@ -100,7 +96,7 @@ public class Machine implements Serializable {
     return this.currentTime + getTime() * 60000;
   }
 
-  @Transient
+
   private boolean isOccupied() {
     return !isAvailable();
   }
@@ -115,7 +111,7 @@ public class Machine implements Serializable {
    * This method checks whether machine is occupied or not.
    */
 
-  @Transient
+
   public boolean isStillOccupied() {
     if (isOccupied()) {
       calculateRemainedTime();

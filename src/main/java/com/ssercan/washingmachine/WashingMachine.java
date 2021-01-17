@@ -2,6 +2,7 @@ package com.ssercan.washingmachine;
 
 import com.ssercan.washingmachine.application.LaundryManager;
 import com.ssercan.washingmachine.domain.machine.MachineRepository;
+import com.ssercan.washingmachine.infrastructure.persistence.hibernate.HibernateMachineRepository;
 import com.ssercan.washingmachine.infrastructure.persistence.jdbc.JdbcMachineRepository;
 
 import com.ssercan.washingmachine.rest.MachineResource;
@@ -17,7 +18,10 @@ public class WashingMachine {
     //how many minutes left
     //user should able to add time
     Scanner scanner = new Scanner(System.in);
-    MachineRepository machineRepository = new JdbcMachineRepository();
+    //JdbcMachineRepository jdbcMachineRepository = new JdbcMachineRepository();
+
+    MachineRepository machineRepository = new HibernateMachineRepository();
+    //HibernateMachineRepository hibernateMachineRepository = new HibernateMachineRepository();
     LaundryManager laundryManager = new LaundryManager(machineRepository);
     MachineResource machineResource = new MachineResource(laundryManager);
 

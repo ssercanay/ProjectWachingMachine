@@ -13,10 +13,11 @@ import java.util.List;
 public class HibernateMachineRepository implements MachineRepository {
 
   private EntityManagerFactory emf = Persistence.createEntityManagerFactory("my-persistence-unit");
-  private EntityManager em = emf.createEntityManager();
+
 
   @Override
   public List<Machine> findAll() {
+    EntityManager em = emf.createEntityManager();
     em.getTransaction().begin();
     CriteriaBuilder builder = em.getCriteriaBuilder();
     CriteriaQuery<Machine> criteria = builder.createQuery(Machine.class);
@@ -30,6 +31,7 @@ public class HibernateMachineRepository implements MachineRepository {
 
   @Override
   public Machine findById(Integer id) {
+    EntityManager em = emf.createEntityManager();
     em.getTransaction().begin();
     Machine machine = em.find(Machine.class, id);
 
@@ -40,6 +42,7 @@ public class HibernateMachineRepository implements MachineRepository {
 
   @Override
   public Machine deleteById(Integer id) {
+    EntityManager em = emf.createEntityManager();
     Machine deletedMachine = findById(id);
     em.getTransaction().begin();
     em.remove(id);
@@ -50,15 +53,20 @@ public class HibernateMachineRepository implements MachineRepository {
 
   @Override
   public Machine save(Machine input) {
+    EntityManager em = emf.createEntityManager();
     em.getTransaction().begin();
 
-    if (!em.contains(input)) {
+    if (input.getId() == 0) {
       em.persist(input);
     } else {
-      input.setDatabaseTime(input.getTime());
+      em.merge(input);
     }
     em.getTransaction().commit();
     em.close();
     return input;
+  }
+
+  private EntityManager getEntityManager() {
+    return emf.createEntityManager();
   }
 }
