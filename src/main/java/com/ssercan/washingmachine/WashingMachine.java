@@ -11,7 +11,7 @@ import java.util.Scanner;
 
 public class WashingMachine {
 
-  public static void main(String[] args) throws Exception {
+  public static void main(String[] args) {
     //program should have following functionalities
     //is it occupied or not
     //how many minutes left

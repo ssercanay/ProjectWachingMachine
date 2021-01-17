@@ -4,12 +4,19 @@ import com.ssercan.washingmachine.infrastructure.reflection.Column;
 import com.ssercan.washingmachine.infrastructure.reflection.Id;
 import com.ssercan.washingmachine.infrastructure.reflection.Table;
 
+import javax.persistence.Entity;
+import javax.persistence.Transient;
+import java.io.Serializable;
+
+@Entity
 @Table(name = "Machines")
-public class Machine {
+public class Machine implements Serializable {
   @Column(name = "name", unique = true, nullable = false)
-  private final String name;
+  private String name;
   private double time;
-  private final double currentTime;
+
+  @Transient
+  private double currentTime;
   @Id
   @Column(name = "id", unique = true, nullable = false)
   private int id;
@@ -22,10 +29,15 @@ public class Machine {
 
   }
 
+  public Machine() {
+
+  }
+
   public void setId(int id) {
     this.id = id;
   }
 
+  @javax.persistence.Id
   public int getId() {
     return this.id;
   }
@@ -62,10 +74,15 @@ public class Machine {
     return this.time;
   }
 
+  public void setName(String name) {
+    this.name = name;
+  }
+
   public String getName() {
     return this.name;
   }
 
+  @Transient
   public boolean isAvailable() {
     return getTime() == 0;
   }
@@ -83,6 +100,7 @@ public class Machine {
     return this.currentTime + getTime() * 60000;
   }
 
+  @Transient
   private boolean isOccupied() {
     return !isAvailable();
   }
@@ -97,6 +115,7 @@ public class Machine {
    * This method checks whether machine is occupied or not.
    */
 
+  @Transient
   public boolean isStillOccupied() {
     if (isOccupied()) {
       calculateRemainedTime();
@@ -110,4 +129,6 @@ public class Machine {
   public String toString() {
     return getName();
   }
+
+
 }
