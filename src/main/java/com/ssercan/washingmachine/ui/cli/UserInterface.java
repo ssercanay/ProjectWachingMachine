@@ -1,39 +1,38 @@
 package com.ssercan.washingmachine.ui.cli;
 
 import com.ssercan.washingmachine.domain.laundry.*;
-import com.ssercan.washingmachine.domain.machine.JdbcMachineRepository;
 import com.ssercan.washingmachine.domain.machine.Machine;
-import com.ssercan.washingmachine.ui.Operation;
+import com.ssercan.washingmachine.rest.MachineResource;
+import com.ssercan.washingmachine.rest.UseMachineRequest;
 
-import java.util.List;
 import java.util.Scanner;
 
 
 public class UserInterface {
 
-  private final Laundry laundryCenter;
   private final Scanner scanner;
-  private JdbcMachineRepository jdbcRepository;
+  private final MachineResource machineResource;
 
   /**
    * This class is ui for washing machines.
    */
-  public UserInterface() {
-    this.scanner = new Scanner(System.in);
+  public UserInterface(Scanner scanner, MachineResource machineResource) {
+    this.scanner = scanner;
+    this.machineResource = machineResource;
 
-    LaundryProvider laundryProvider = new FromDatabaseLaundryProvider();
-    this.laundryCenter = laundryProvider.provide();
-    this.jdbcRepository = new JdbcMachineRepository();
-    this.laundryCenter.setMachineRepository(jdbcRepository);
+    //LaundryProvider laundryProvider = new FromDatabaseLaundryProvider();
+   // Laundry laundryCenter = laundryProvider.provide();
+    //JdbcMachineRepository jdbcRepository = new JdbcMachineRepository();
+    //laundryCenter.setMachineRepository(jdbcRepository);
   }
 
   public void start(String provider) {
     LaundryProvider laundryProvider;
 
     if (FromTextFileLaundryProvider.class.getSimpleName().contains(provider)) {
-       laundryProvider = new FromTextFileLaundryProvider("emptyFIle.txt");
+      laundryProvider = new FromTextFileLaundryProvider("emptyFIle.txt");
     } else if (RandomLaundryProvider.class.getSimpleName().contains(provider)) {
-       laundryProvider = new RandomLaundryProvider();
+      laundryProvider = new RandomLaundryProvider();
     }
     System.out.println("\nWelcome to laundry room\n");
     setOperation();
@@ -53,31 +52,34 @@ public class UserInterface {
       System.out.print("Please enter an operation: ");
       int operation = scanner.nextInt();
 
-      if (operation == Operation.EXIT.getValue()) {
+      if (operation == 0) {
         break;
       } else if (operation == 1) {
 
-        List<Machine> listOfAvailableMachines = laundryCenter.getAvailableMachines();
-        if (listOfAvailableMachines.isEmpty()) {
+        if (machineResource.getMachines().isEmpty()) {
           System.out.println("\nAll machines are occupied!\n");
         } else {
-          for (Machine machine : listOfAvailableMachines) {
-            System.out.println("\n" + machine + " is available");
+
+          for (Machine machine : machineResource.getMachines()) {
+            System.out.println("\n" + "Machine ID: " + machine.getId()
+                    + " ---> " + machine + " is available");
           }
           setMachineProgram();
         }
 
       } else if (operation == 2) {
-          List<Machine> listOfRemainedTimeOfOccupiedMachines = laundryCenter.getOccupiedMachines();
-          for (Machine machine : listOfRemainedTimeOfOccupiedMachines) {
-            System.out.println("\n" + machine.getName() + ":"
-                  + " " + machine.getTime() + " minutes left");
+        
+        for (Machine machine : machineResource.getMachines()) {
+
+          System.out.println("\n" + "Machine ID: " + machine.getId()
+                  + " ---> " + machine.getName() + ":" + " "
+                  + machine.getTime() + " minutes left");
         }
       } else if (operation == 3) {
-          addMachine();
+        addMachine();
 
       } else {
-          System.out.println("\nPlease enter a valid operation\n");
+        System.out.println("\nPlease enter a valid operation\n");
       }
     }
 
@@ -98,22 +100,22 @@ public class UserInterface {
     scanner.nextLine();
     System.out.print("Please add name of machine: ");
     String newMachine = scanner.nextLine();
-    jdbcRepository.save(new Machine(newMachine));
+    machineResource.postCreateMachine(newMachine);
   }
 
   private void setMachineProgram() {
-    System.out.print("\nChoose a machine please: ");
+    System.out.print("\nPlease type the ID of machine you want to choose: ");
     int choseMachine = scanner.nextInt();
     System.out.print("\nSet a time please: ");
     int setTime = scanner.nextInt();
     int machineLowerIndex = 0;
-    int machineUpperIndex = 4;
     int timeCantBeLessThanOne = 0;
 
     if (choseMachine > machineLowerIndex
-        && choseMachine < machineUpperIndex && setTime > timeCantBeLessThanOne) {
-      laundryCenter.setMachine(choseMachine, setTime);
-      System.out.println("\nWe set your program, please come in " + setTime + " minutes to take your laundries.");
+         && setTime > timeCantBeLessThanOne) {
+      machineResource.putUseMachine(new UseMachineRequest(choseMachine, setTime));
+      System.out.println("\nWe set your program, please come in " + setTime
+              + " minutes to take your laundries.");
     } else  {
       System.out.println("\nPlease enter a valid machine and time");
     }

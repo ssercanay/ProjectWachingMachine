@@ -1,21 +1,23 @@
 package com.ssercan.washingmachine.domain.machine;
 
-import com.ssercan.washingmachine.domain.Column;
-import com.ssercan.washingmachine.domain.Id;
-import com.ssercan.washingmachine.domain.Table;
 
-@Table(name = "Machines")
-public class Machine {
+import javax.persistence.*;
+import java.io.Serializable;
+
+@Entity
+@Table(name = "machines")
+public class Machine implements Serializable {
   @Column(name = "name", unique = true, nullable = false)
-  private final String name;
+  private String name;
+  @Column(name = "remained_time")
   private double time;
-  private final double currentTime;
+
+  @Transient
+  private double currentTime;
   @Id
   @Column(name = "id", unique = true, nullable = false)
   private int id;
-  @Column(name = "in_use")
-  private boolean inUse;
-  private  double databaseTime;
+
 
   public Machine(String name) {
     this.name = name;
@@ -23,19 +25,39 @@ public class Machine {
 
   }
 
+  public Machine() {
+
+  }
+
   public void setId(int id) {
     this.id = id;
   }
+
 
   public int getId() {
     return this.id;
   }
 
   public void setTime(double time) {
-
     if (isAvailable()) {
       if (time > 0) {
       this.time = time;
+      } else {
+        throw new RuntimeException("You can not set time to a negative number");
+      }
+    } else {
+      throw new RuntimeException("You can not set time to occupied machines");
+
+    }
+  }
+
+
+  public void setDatabaseTime(double time) {
+    if (isAvailable()) {
+      if (time > 0) {
+        this.time = time;
+        //calculateRemainedTime(); is added to test remained time
+        calculateRemainedTime();
       } else {
         throw new RuntimeException("You can not set time to a negative number");
       }
@@ -48,44 +70,47 @@ public class Machine {
     return this.time;
   }
 
+  public void setName(String name) {
+    this.name = name;
+  }
+
   public String getName() {
     return this.name;
   }
+
 
   public boolean isAvailable() {
     return getTime() == 0;
   }
 
   private void remainedTime(double time) {
+    if (time < 0) {
+      this.time = 0;
+    } else {
       this.time = time;
+      }
   }
 
-  public void setDatabaseTime(double databaseTime) {
-    this.databaseTime = databaseTime;
-  }
-
-  private double getDatabaseTime() {
-    System.out.println(this.databaseTime);
-    return  this.databaseTime;
-  }
 
   public double getCurrentTime() {
     return this.currentTime + getTime() * 60000;
   }
+
 
   private boolean isOccupied() {
     return !isAvailable();
   }
 
   private void calculateRemainedTime() {
-    double totalTime = getDatabaseTime();
+    double totalTime = getTime();
     double remainedTime = totalTime - System.currentTimeMillis();
-    this.remainedTime((int) (remainedTime / 60000));
+    remainedTime((int) (remainedTime / 60000));
   }
 
   /**
    * This method checks whether machine is occupied or not.
    */
+
 
   public boolean isStillOccupied() {
     if (isOccupied()) {
@@ -100,4 +125,6 @@ public class Machine {
   public String toString() {
     return getName();
   }
+
+
 }

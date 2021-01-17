@@ -1,6 +1,6 @@
 package com.ssercan.washingmachine.domain.laundry;
 
-import com.ssercan.washingmachine.domain.machine.JdbcMachineRepository;
+import com.ssercan.washingmachine.infrastructure.persistence.jdbc.JdbcMachineRepository;
 import com.ssercan.washingmachine.domain.machine.MachineRepository;
 
 public class FromDatabaseLaundryProvider implements LaundryProvider{

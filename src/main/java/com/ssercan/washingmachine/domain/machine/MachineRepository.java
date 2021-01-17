@@ -1,15 +1,7 @@
 package com.ssercan.washingmachine.domain.machine;
 
-import java.util.List;
+import com.ssercan.washingmachine.domain.Repository;
 
-public interface MachineRepository {
+public interface MachineRepository extends Repository<Integer, Machine> {
 
-  List<Machine> findAll();
-
-  Machine findById(String id);
-
-  Machine deleteById(String id);
-
-  // if machine already exists, update
-  Machine save(Machine machine);
 }
