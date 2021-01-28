@@ -6,7 +6,6 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
 public class SpendingRepository implements JdbcRepository<Spending>{
   Statement stmt = null;
   private String sql;

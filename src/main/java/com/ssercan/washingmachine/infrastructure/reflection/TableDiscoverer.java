@@ -1,5 +1,6 @@
 package com.ssercan.washingmachine.infrastructure.reflection;
 
+import com.ssercan.washingmachine.ui.Test;
 import org.reflections.Reflections;
 
 import javax.persistence.Column;
