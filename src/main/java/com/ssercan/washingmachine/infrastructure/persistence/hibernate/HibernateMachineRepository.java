@@ -2,6 +2,7 @@ package com.ssercan.washingmachine.infrastructure.persistence.hibernate;
 
 import com.ssercan.washingmachine.domain.machine.Machine;
 import com.ssercan.washingmachine.domain.machine.MachineRepository;
+import com.ssercan.washingmachine.infrastructure.reflection.Component;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -10,10 +11,10 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import java.util.List;
 
+@Component
 public class HibernateMachineRepository implements MachineRepository {
 
   private EntityManagerFactory emf = Persistence.createEntityManagerFactory("my-persistence-unit");
-
 
   @Override
   public List<Machine> findAll() {

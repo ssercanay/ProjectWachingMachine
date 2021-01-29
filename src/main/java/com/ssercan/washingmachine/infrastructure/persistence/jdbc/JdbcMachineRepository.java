@@ -8,7 +8,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
+
 public class JdbcMachineRepository implements MachineRepository {
   private String sql;
   static final String DB_URL = "jdbc:mysql://localhost:3307/sercan_db";

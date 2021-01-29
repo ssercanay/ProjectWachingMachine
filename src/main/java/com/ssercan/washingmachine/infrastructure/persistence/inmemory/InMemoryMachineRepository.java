@@ -6,7 +6,6 @@ import com.ssercan.washingmachine.infrastructure.reflection.Component;
 
 import java.util.*;
 
-@Component
 public class InMemoryMachineRepository implements MachineRepository {
   private final Map<Integer, Machine> machines;
 
